@@ -10,9 +10,9 @@ module Devise
       end
 
       def authenticate!
-        RAILS_DEFAULT_LOGGER.info("Authenticating with OpenID for mapping #{mapping.to}")
+        Rails.logger.info("Authenticating with OpenID for mapping #{mapping.to}")
         if resp = env[Rack::OpenID::RESPONSE]
-          RAILS_DEFAULT_LOGGER.info "Attempting OpenID auth: #{env["rack.openid.response"].inspect}"
+          Rails.logger.info "Attempting OpenID auth: #{env["rack.openid.response"].inspect}"
           case resp.status
           when :success
             u = mapping.to.find_by_identity_url(resp.identity_url)
@@ -30,7 +30,7 @@ module Devise
           end
         else
           header_data = Rack::OpenID.build_header(:identifier => params[scope]["identity_url"])
-          RAILS_DEFAULT_LOGGER.info header_data
+          Rails.logger.info header_data
           custom!([401, {
                 Rack::OpenID::AUTHENTICATE_HEADER => header_data
               }, "Sign in with OpenID"])
